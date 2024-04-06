@@ -112,25 +112,8 @@ log: log_start log_header_items log_qso_items log_end
 log_start:    KW_START_OF_LOG sentence T_NEWLINE                                        {printf("KW_START_OF_LOG: %s\n", yylval.str); STR_FREE(yylval.str);}
 ;
 
-sentence:
-            |   sentence T_WORD
-            |   sentence T_CALLSIGN
-            |   sentence T_STATION_CALLSIGN
-            |   sentence T_EMAIL
-            |   sentence T_MAIDENHEAD_GRID
-            |   sentence T_CONTEST
-            |   sentence T_NUMBER
-;
-
-operators:    T_CALLSIGN
-            |   operators T_CALLSIGN
-            |   operators T_STATION_CALLSIGN
-;
-
-
 log_end:    KW_END_OF_LOG T_NEWLINE                                                     {printf("KW_END_OF_LOG:\n"); exit(0);}
 ;
-
 
 log_header_items:
             | log_header_items KW_CALLSIGN T_CALLSIGN T_NEWLINE                         {printf("KW_CALLSIGN: %s\n", yylval.str); STR_FREE(yylval.str);}
@@ -162,6 +145,22 @@ log_header_items:
             | log_header_items KW_SOAPBOX sentence T_NEWLINE                            {printf("KW_SOAPBOX: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_DEBUG sentence T_NEWLINE                              {printf("KW_DEBUG: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_COMMENT sentence T_NEWLINE                            {printf("KW_COMMENT:\n"); STR_FREE(yylval.str);}
+;
+
+log_qso_items: 
+            | log_qso_items KW_QSO sentence T_NEWLINE                                   {printf("KW_QSO: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_qso_items KW_X_QSO sentence T_NEWLINE                                 {printf("KW_X_QSO: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_qso_items KW_COMMENT sentence T_NEWLINE                               {printf("KW_COMMENT:\n"); STR_FREE(yylval.str);}
+;
+
+sentence:
+            |   sentence T_WORD
+            |   sentence T_CALLSIGN
+            |   sentence T_STATION_CALLSIGN
+            |   sentence T_EMAIL
+            |   sentence T_MAIDENHEAD_GRID
+            |   sentence T_CONTEST
+            |   sentence T_NUMBER
 ;
 
 category_assited:
@@ -204,6 +203,11 @@ category_certificate:
             | KW_CATEGORY_CERTIFICATE_VALUE
 ;
 
+operators:    T_CALLSIGN
+            |   operators T_CALLSIGN
+            |   operators T_STATION_CALLSIGN
+;
+
 contest:
             | T_CALLSIGN
             | T_CONTEST
@@ -220,12 +224,6 @@ number:
 
 offtime:
             | T_OFFTIME
-;
-
-log_qso_items: 
-            | log_qso_items KW_QSO sentence T_NEWLINE                                   {printf("KW_QSO: %s\n", yylval.str); STR_FREE(yylval.str);}
-            | log_qso_items KW_X_QSO sentence T_NEWLINE                                 {printf("KW_X_QSO: %s\n", yylval.str); STR_FREE(yylval.str);}
-            | log_qso_items KW_COMMENT sentence T_NEWLINE                               {printf("KW_COMMENT:\n"); STR_FREE(yylval.str);}
 ;
 
 
