@@ -9,13 +9,13 @@ ____________________________________________________
 Goal:         Provide basic open infrastructure to organize Amateur Radio contests, e.g. for contests organized by the Chile Contest Group
 
 ____________________________________________________
-Version:      V0.1    20240406
-Author:       Tihomir Sokcevic
-Callsign:     CA3TSK
-Copyright:    Tihomir Sokcevic 2024
-License:      GNU General Public License v3.0 (GNU GPLv3)
-License-URL:  https://www.gnu.org/licenses/gpl-3.0.html
-URL:          https://www.chilecontest.com
+- Version:      V0.1    20240406
+- Author:       Tihomir Sokcevic
+- Callsign:     CA3TSK
+- Copyright:    Tihomir Sokcevic 2024
+- License:      GNU General Public License v3.0 (GNU GPLv3)
+- License-URL:  https://www.gnu.org/licenses/gpl-3.0.html
+- URL:          https://www.chilecontest.com
 
 ____________________________________________________
 Timeline (Versions):
