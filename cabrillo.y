@@ -1,7 +1,5 @@
 
 %{
-
-
 /*
     Description:    Lexer and Parser for Cabrillo log format used in Amateur Radio contests
     Author:         Tihomir Sokcevic
@@ -28,13 +26,12 @@ extern int yyparse();
 extern char *yytext;
 */
 
+void yyin_fclose();
 void yyerror(YYLTYPE * yylloc, const char* s);
 
 #define STR_FREE(p)    {if(p){free(p); p = NULL;}}
 
-
 %}
-
 
 /* %debug */
 
@@ -42,11 +39,9 @@ void yyerror(YYLTYPE * yylloc, const char* s);
 %locations
 %define parse.error verbose
 
-
 %union{
   char * str;
 }
-
 
 %token<str> T_MAIDENHEAD_GRID
 %token<str> T_EMAIL
@@ -92,19 +87,15 @@ void yyerror(YYLTYPE * yylloc, const char* s);
 %token KW_CATEGORY_CERTIFICATE
 %token<str> KW_CATEGORY_CERTIFICATE_VALUE
 
-
 %token KW_CLAIMED_SCORE KW_CLUB KW_CREATED_BY KW_EMAIL KW_GRID_LOCATOR KW_LOCATION
 %token KW_NAME KW_ADDRESS KW_ADDRESS_CITY KW_ADDRESS_STATE_PROVINCE
 %token KW_ADDRESS_POSTALCODE KW_ADDRESS_COUNTRY
 %token KW_OPERATORS KW_OFFTIME KW_SOAPBOX KW_DEBUG
 %token KW_QSO KW_X_QSO
 
-
 %start log
 
-
 %%
-
 
 log: log_start log_header_items log_qso_items log_end
 ;
@@ -112,7 +103,7 @@ log: log_start log_header_items log_qso_items log_end
 log_start:    KW_START_OF_LOG sentence T_NEWLINE                                        {printf("KW_START_OF_LOG: %s\n", yylval.str); STR_FREE(yylval.str);}
 ;
 
-log_end:    KW_END_OF_LOG T_NEWLINE                                                     {printf("KW_END_OF_LOG:\n"); exit(0);}
+log_end:    KW_END_OF_LOG T_NEWLINE                                                     {printf("KW_END_OF_LOG:\n"); yyin_fclose(); exit(0);}
 ;
 
 log_header_items:
@@ -229,8 +220,14 @@ offtime:
 
 %%
 
+void yyin_fclose() {
+    if(yyin && yyin != stdin) {
+        fclose(yyin);
+        yyin = NULL;
+    }
+}
 
-const char* g_current_filename = "stdin";
+const char* g_current_filename = "STDIN";
 
 int main(int argc, char* argv[]) {
     yyin = stdin;
@@ -252,9 +249,10 @@ int main(int argc, char* argv[]) {
         yyparse();
     } while(!feof(yyin));
 
+    yyin_fclose();
+
     return 0;
 }
-
 
 void yyerror(YYLTYPE * yylloc, const char* s) {
     if(yylloc) {
@@ -262,5 +260,8 @@ void yyerror(YYLTYPE * yylloc, const char* s) {
     } else {
        fprintf(stderr, "Error: File=%s Line=%02d : %s\n", g_current_filename, yylineno, s);
     }
+
+    yyin_fclose();
+
     exit(1);
 }

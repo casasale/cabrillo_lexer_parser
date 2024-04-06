@@ -1,7 +1,5 @@
 
 %{
-
-
 /*
     Description:    Lexer and Parser for Cabrillo log format used in Amateur Radio contests
     Author:         Tihomir Sokcevic
@@ -34,8 +32,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cabrillo.tab.h"
-
-
 
 int iSTART_OF_LOG = 0;
 int iEND_OF_LOG = 0;
@@ -126,7 +122,6 @@ int iOFFTIME = 0;
 int iDEBUG = 0;
 int iSTATION_CALLSIGN = 0;
 
-
 %}
 
 %option noyywrap
@@ -154,7 +149,6 @@ alphanumhyphen                          [a-zA-Z0-9\-]+
 num                                     [0-9]+
 
 %%
-
 
 "START-OF-LOG:"                         {duplicate_check(0, &iSTART_OF_LOG); yylval->str = 0; return KW_START_OF_LOG;}
 "END-OF-LOG:"                           {iEND_OF_LOG = yylineno; return KW_END_OF_LOG;}
@@ -206,7 +200,6 @@ num                                     [0-9]+
 "CATEGORY-CERTIFICATE:"                 {duplicate_check(0, &iCATEGORY_CERTIFICATE); yylval->str = 0; return KW_CATEGORY_CERTIFICATE;}
 "YES"|"NO"                              {str_cat(&yylval->str, yytext); return KW_CATEGORY_CERTIFICATE_VALUE;}
 
-
 "CLAIMED-SCORE:"                        {duplicate_check(0, &iCLAIMED_SCORE); yylval->str = 0; return KW_CLAIMED_SCORE;}
 "CLUB:"                                 {duplicate_check(0, &iCLUB); yylval->str = 0; return KW_CLUB;}
 "CREATED-BY:"                           {duplicate_check(0, &iCREATED_BY); yylval->str = 0; return KW_CREATED_BY;}
@@ -228,10 +221,8 @@ num                                     [0-9]+
 "X-"[^Q][^S][^O].*                      {yylval->str = 0; return KW_COMMENT;}     /* Can be many entries */
 "QSO:"                                  {yylval->str = 0; return KW_QSO;}
 
-
 "\r\n"                                  {return T_NEWLINE;}
 "\n"                                    {return T_NEWLINE;}
-
 
 {maidenhead_grid6}                      {str_cat(&yylval->str, yytext); return T_MAIDENHEAD_GRID;}
 {maidenhead_grid4}                      {str_cat(&yylval->str, yytext); return T_MAIDENHEAD_GRID;}
@@ -242,24 +233,18 @@ num                                     [0-9]+
 {callsign}                              {str_cat(&yylval->str, yytext); return T_CALLSIGN;}
 {alphanum}"/"{callsign}                 {str_cat(&yylval->str, yytext); return T_CALLSIGN;}
 {callsign}"/"{alphanum}                 {str_cat(&yylval->str, yytext); return T_CALLSIGN;}
+
 "@"{callsign}                           {duplicate_check(0, &iSTATION_CALLSIGN); str_cat(&yylval->str, yytext); return T_STATION_CALLSIGN;}
 "@"{alphanum}"/"{callsign}              {duplicate_check(0, &iSTATION_CALLSIGN); str_cat(&yylval->str, yytext); return T_STATION_CALLSIGN;}
 "@"{callsign}"/"{alphanum}              {duplicate_check(0, &iSTATION_CALLSIGN); str_cat(&yylval->str, yytext); return T_STATION_CALLSIGN;}
 
 {num}                                   {str_cat(&yylval->str, yytext); return T_NUMBER;}
-
 {alphanumhyphen}                        {str_cat(&yylval->str, yytext); return T_CONTEST;}
-
 {date}{whitespace}{time}{whitespace}{date}{whitespace}{time}    {str_cat(&yylval->str, yytext); return T_OFFTIME;}
-
-
 {notwhitespace}                         {str_cat(&(yylval->str), yytext); return T_WORD;}
 
 [ \t\f]+                                {/* Do nothing */}
-
 .                                       {return *yytext;}
-
 <<EOF>>                                 {static int once = 0; return once++ ? YY_NULL : T_NEWLINE;}   /* Handle last line without new line */
-
 
 %%
