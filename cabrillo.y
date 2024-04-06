@@ -17,6 +17,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* #include "cabrillo.tab.h" */
+
 extern int yylex(void*, void*);
 
 extern int yyparse();
@@ -38,10 +40,8 @@ struct YYLTYPE
 # define YYLTYPE_IS_TRIVIAL 1
 #endif
 
-extern YYLTYPE yylloc;
 
-
-void yyerror(const char* s);
+void yyerror(YYLTYPE * yylloc, const char* s);
 
 #define STR_FREE(p)    {if(p){free(p); p = NULL;}}
 
@@ -49,14 +49,16 @@ void yyerror(const char* s);
 %}
 
 
+/* %debug */
+
+%define api.pure full
 %locations
+%define parse.error verbose
+
 
 %union{
   char * str;
 }
-
-%define parse.error verbose
-%define api.pure
 
 
 %token<str> T_MAIDENHEAD_GRID
@@ -144,8 +146,8 @@ log_end:    KW_END_OF_LOG T_NEWLINE                                             
 
 
 log_header_items:
-            | log_header_items KW_CALLSIGN T_CALLSIGN T_NEWLINE                         {printf("KW_CALLSIGN: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_CONTEST contest T_NEWLINE                             {printf("KW_CONTEST: %s\n", yylval.str ); STR_FREE(yylval.str);}
+            | log_header_items KW_CALLSIGN T_CALLSIGN T_NEWLINE                         {printf("KW_CALLSIGN: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_CONTEST contest T_NEWLINE                             {printf("KW_CONTEST: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_CATEGORY_ASSISTED category_assited T_NEWLINE          {printf("KW_CATEGORY_ASSISTED: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_CATEGORY_BAND category_band T_NEWLINE                 {printf("KW_CATEGORY_BAND: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_CATEGORY_MODE category_mode T_NEWLINE                 {printf("KW_CATEGORY_MODE: %s\n", yylval.str); STR_FREE(yylval.str);}
@@ -156,22 +158,22 @@ log_header_items:
             | log_header_items KW_CATEGORY_TRANSMITTER category_transmitter T_NEWLINE   {printf("KW_CATEGORY_TRANSMITTER: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_CATEGORY_OVERLAY category_overlay T_NEWLINE           {printf("KW_CATEGORY_OVERLAY: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_CATEGORY_CERTIFICATE category_certificate T_NEWLINE   {printf("KW_CATEGORY_CERTIFICATE: %s\n", yylval.str); STR_FREE(yylval.str);}    /* LAST ENUM */
-            | log_header_items KW_CLAIMED_SCORE number T_NEWLINE                        {printf("KW_CLAIMED_SCORE: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_CLUB sentence T_NEWLINE                               {printf("KW_CLUB: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_CREATED_BY sentence T_NEWLINE                         {printf("KW_CREATED_BY: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_EMAIL T_EMAIL T_NEWLINE                               {printf("KW_EMAIL: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_GRID_LOCATOR grid_locator T_NEWLINE                   {printf("KW_GRID_LOCATOR: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_LOCATION sentence T_NEWLINE                           {printf("KW_LOCATION: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_NAME sentence T_NEWLINE                               {printf("KW_NAME: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_ADDRESS sentence T_NEWLINE                            {printf("KW_ADDRESS: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_ADDRESS_CITY sentence T_NEWLINE                       {printf("KW_ADDRESS_CITY: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_ADDRESS_STATE_PROVINCE sentence T_NEWLINE             {printf("KW_ADDRESS_STATE_PROVINCE: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_ADDRESS_POSTALCODE sentence T_NEWLINE                 {printf("KW_ADDRESS_POSTALCODE: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_ADDRESS_COUNTRY sentence T_NEWLINE                    {printf("KW_ADDRESS_COUNTRY: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_OPERATORS operators T_NEWLINE                         {printf("KW_OPERATORS: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_OFFTIME offtime T_NEWLINE                             {printf("KW_OFFTIME: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_SOAPBOX sentence T_NEWLINE                            {printf("KW_SOAPBOX: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_header_items KW_DEBUG sentence T_NEWLINE                              {printf("KW_DEBUG: %s\n", yylval.str ); STR_FREE(yylval.str);}
+            | log_header_items KW_CLAIMED_SCORE number T_NEWLINE                        {printf("KW_CLAIMED_SCORE: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_CLUB sentence T_NEWLINE                               {printf("KW_CLUB: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_CREATED_BY sentence T_NEWLINE                         {printf("KW_CREATED_BY: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_EMAIL T_EMAIL T_NEWLINE                               {printf("KW_EMAIL: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_GRID_LOCATOR grid_locator T_NEWLINE                   {printf("KW_GRID_LOCATOR: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_LOCATION sentence T_NEWLINE                           {printf("KW_LOCATION: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_NAME sentence T_NEWLINE                               {printf("KW_NAME: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_ADDRESS sentence T_NEWLINE                            {printf("KW_ADDRESS: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_ADDRESS_CITY sentence T_NEWLINE                       {printf("KW_ADDRESS_CITY: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_ADDRESS_STATE_PROVINCE sentence T_NEWLINE             {printf("KW_ADDRESS_STATE_PROVINCE: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_ADDRESS_POSTALCODE sentence T_NEWLINE                 {printf("KW_ADDRESS_POSTALCODE: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_ADDRESS_COUNTRY sentence T_NEWLINE                    {printf("KW_ADDRESS_COUNTRY: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_OPERATORS operators T_NEWLINE                         {printf("KW_OPERATORS: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_OFFTIME offtime T_NEWLINE                             {printf("KW_OFFTIME: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_SOAPBOX sentence T_NEWLINE                            {printf("KW_SOAPBOX: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_DEBUG sentence T_NEWLINE                              {printf("KW_DEBUG: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_COMMENT sentence T_NEWLINE                            {printf("KW_COMMENT:\n"); STR_FREE(yylval.str);}
 ;
 
@@ -234,8 +236,8 @@ offtime:
 ;
 
 log_qso_items: 
-            | log_qso_items KW_QSO sentence T_NEWLINE                                   {printf("KW_QSO: %s\n", yylval.str ); STR_FREE(yylval.str);}
-            | log_qso_items KW_X_QSO sentence T_NEWLINE                                 {printf("KW_X_QSO: %s\n", yylval.str ); STR_FREE(yylval.str);}
+            | log_qso_items KW_QSO sentence T_NEWLINE                                   {printf("KW_QSO: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_qso_items KW_X_QSO sentence T_NEWLINE                                 {printf("KW_X_QSO: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_qso_items KW_COMMENT sentence T_NEWLINE                               {printf("KW_COMMENT:\n"); STR_FREE(yylval.str);}
 ;
 
@@ -243,8 +245,23 @@ log_qso_items:
 %%
 
 
-int main() {
+const char* g_current_filename = "stdin";
+
+int main(int argc, char* argv[]) {
     yyin = stdin;
+
+#if YYDEBUG
+//    yydebug = 1;
+#endif
+
+    if(argc == 2) {
+        yyin = fopen(argv[1], "r");
+        g_current_filename = argv[1];
+        if(!yyin) {
+            perror(argv[1]);
+            return 1;
+        }
+    }
 
     do {
         yyparse();
@@ -253,8 +270,12 @@ int main() {
     return 0;
 }
 
-void yyerror(const char* s) {
-//    fprintf(stderr, "Error: Line=%02d %02d:%02d : %s\n", yylineno, yylloc.first_line,  yylloc.first_column, s);
-    fprintf(stderr, "Error: Line=%02d : %s\n", yylineno, s);
+
+void yyerror(YYLTYPE * yylloc, const char* s) {
+    if(yylloc) {
+        fprintf(stderr, "Error: File=%s Line=%02d Column=%02d : %s\n", g_current_filename, yylloc->first_line,  yylloc->first_column, s);
+    } else {
+       fprintf(stderr, "Error: File=%s Line=%02d : %s\n", g_current_filename, yylineno, s);
+    }
     exit(1);
 }

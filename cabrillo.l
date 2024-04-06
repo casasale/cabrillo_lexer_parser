@@ -1,23 +1,5 @@
-%option noyywrap
-%option nodefault
-
 
 %{
-
-#define YY_USER_INIT    {yylval->str = 0; yylloc->first_line = 0; yylloc->first_column = 0; yylloc->last_line = 0; yylloc->last_column = 0;}
-
-#define YY_USER_ACTION \
-    yylloc->first_line = yylloc->last_line; \
-    yylloc->first_column = yylloc->last_column; \
-    for(int i = 0; yytext[i] != '\0'; i++) { \
-        if(yytext[i] == '\n') { \
-            yylloc->last_line++; \
-            yylloc->last_column = 0; \
-        } \
-        else { \
-            yylloc->last_column++; \
-        } \
-    }
 
 
 /*
@@ -31,6 +13,23 @@
                     for contests organized by the Chile Contest Group
     URL:            https://www.chilecontest.com
 */
+
+#define YY_USER_INIT    {yylval->str = 0; yylloc->first_line = 1; yylloc->first_column = 1; yylloc->last_line = 1; yylloc->last_column = 1;}
+
+#define YY_USER_ACTION \
+    yylloc->first_line = yylloc->last_line; \
+    yylloc->first_column = yylloc->last_column; \
+    for(unsigned int i = 0; yytext[i]; ++i) { \
+        if(yytext[i] == '\n') { \
+            ++yylloc->last_line; \
+            yylloc->last_column = 1; \
+        } \
+        else { \
+            ++yylloc->last_column; \
+        } \
+    }
+
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,7 +59,7 @@ void str_cat(char ** s, char * t) {
     *s = n;
 }
 
-extern void yyerror(const char* s);
+extern void yyerror(YYLTYPE * yylloc, const char* s);
 
 void duplicate_check(int max_count, int * prev_line) {
     if(iEND_OF_LOG) {
@@ -68,7 +67,7 @@ void duplicate_check(int max_count, int * prev_line) {
     }
 
     if(!prev_line) {
-        yyerror("Unexpected internal error condition.");
+        yyerror(NULL, "Unexpected internal error condition.");
         return;
     }
 
@@ -95,7 +94,7 @@ void duplicate_check(int max_count, int * prev_line) {
 
     str_cat(&s, buffer);
 
-    yyerror(s);
+    yyerror(NULL, s);
 }
 
 int iCONTEST = 0;
@@ -130,10 +129,13 @@ int iSTATION_CALLSIGN = 0;
 
 %}
 
-
+%option noyywrap
+%option nodefault
 %option bison-bridge
 %option bison-locations
 %option yylineno
+
+/* %option debug */
 
 whitespace                              [ \t\f\r]+
 notwhitespace                           [^ \t\f\r\n]+
