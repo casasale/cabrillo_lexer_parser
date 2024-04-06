@@ -1,4 +1,4 @@
-# Tihomir CA3TSK Cabrillo Lexer Parser
+# Cabrillo Lexer Parser
 Lexer and parser for Cabrillo log format used for Amateur Radio contests (flex and bison)
 
 Source code:   https://github.com/casasale/cabrillo_lexer_parser
