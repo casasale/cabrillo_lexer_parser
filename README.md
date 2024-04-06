@@ -1,4 +1,4 @@
-# Tihomir Sokcevic CA3TSK Cabrillo Lexer_Parser
+# Tihomir CA3TSK Cabrillo Lexer Parser
 Lexer and parser for Cabrillo log format used for Amateur Radio contests (flex and bison)
 
 Source code:   https://github.com/casasale/cabrillo_lexer_parser
@@ -20,9 +20,9 @@ make ; # Compile it
 ____________________________________________________
 
 - Version:      V0.1    20240406
-- Author:       Tihomir Sokcevic
+- Author:       Tihomir CA3TSK
 - Callsign:     CA3TSK
-- Copyright:    Tihomir Sokcevic 2024
+- Copyright:    Tihomir CA3TSK 2024
 - License:      GNU General Public License v3.0 (GNU GPLv3)
 - License-URL:  https://www.gnu.org/licenses/gpl-3.0.html
 - URL:          https://www.chilecontest.com
