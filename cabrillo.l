@@ -1,21 +1,23 @@
-/*
-    Description:    Lexer and Parser for Cabrillo log format used in Amateur Radio contests
-    Version:        V0.1    20240406
-    Author:         Tihomir Sokcevic
-    Callsign:       CA3TSK
-    Copyright:      Tihomir Sokcevic 2024
-    License:        GNU General Public License v3.0 (GNU GPLv3)
-    License-URL:    https://www.gnu.org/licenses/gpl-3.0.html
-    Goal:           Provide basic open infrastructure to organize Amateur Radio contests, e.g.
-                    for contests organized by the Chile Contest Group
-    URL:            https://www.chilecontest.com
-*/
-
 %option noyywrap
 %option nodefault
 
 
 %{
+
+#define YY_USER_INIT    {yylval->str = 0; yylloc->first_line = 0; yylloc->first_column = 0; yylloc->last_line = 0; yylloc->last_column = 0;}
+
+#define YY_USER_ACTION \
+    yylloc->first_line = yylloc->last_line; \
+    yylloc->first_column = yylloc->last_column; \
+    for(int i = 0; yytext[i] != '\0'; i++) { \
+        if(yytext[i] == '\n') { \
+            yylloc->last_line++; \
+            yylloc->last_column = 0; \
+        } \
+        else { \
+            yylloc->last_column++; \
+        } \
+    }
 
 
 /*
@@ -33,6 +35,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cabrillo.tab.h"
+
+
 
 int iSTART_OF_LOG = 0;
 int iEND_OF_LOG = 0;
@@ -143,7 +147,9 @@ maidenhead_grid6                        [a-rA-R][a-rA-R][0-9][0-9][a-xA-X][a-xA-
 maidenhead_grid8                        [a-rA-R][a-rA-R][0-9][0-9][a-xA-X][a-xA-X][0-9][0-9]
 time                                    [0-9][0-9][0-9][0-9]
 word                                    [a-zA-Z0-9\.\-\_]+
-
+alphanum                                [a-zA-Z0-9]+
+alphanumhyphen                          [a-zA-Z0-9\-]+
+num                                     [0-9]+
 
 %%
 
@@ -232,10 +238,15 @@ word                                    [a-zA-Z0-9\.\-\_]+
 {email}                                 {str_cat(&yylval->str, yytext); return T_EMAIL;}
 
 {callsign}                              {str_cat(&yylval->str, yytext); return T_CALLSIGN;}
+{alphanum}"/"{callsign}                 {str_cat(&yylval->str, yytext); return T_CALLSIGN;}
+{callsign}"/"{alphanum}                 {str_cat(&yylval->str, yytext); return T_CALLSIGN;}
+"@"{callsign}                           {duplicate_check(0, &iSTATION_CALLSIGN); str_cat(&yylval->str, yytext); return T_STATION_CALLSIGN;}
+"@"{alphanum}"/"{callsign}              {duplicate_check(0, &iSTATION_CALLSIGN); str_cat(&yylval->str, yytext); return T_STATION_CALLSIGN;}
+"@"{callsign}"/"{alphanum}              {duplicate_check(0, &iSTATION_CALLSIGN); str_cat(&yylval->str, yytext); return T_STATION_CALLSIGN;}
 
-[0-9]+                                  {str_cat(&yylval->str, yytext); return T_NUMBER;}
+{num}                                   {str_cat(&yylval->str, yytext); return T_NUMBER;}
 
-[a-zA-Z0-9\-]+                          {str_cat(&yylval->str, yytext); return T_CONTEST;}
+{alphanumhyphen}                        {str_cat(&yylval->str, yytext); return T_CONTEST;}
 
 {date}{whitespace}{time}{whitespace}{date}{whitespace}{time}    {str_cat(&yylval->str, yytext); return T_OFFTIME;}
 
@@ -246,7 +257,7 @@ word                                    [a-zA-Z0-9\.\-\_]+
 
 .                                       {return *yytext;}
 
-<<EOF>>                                 {static int once = 0; return once++ ? YY_NULL : T_NEWLINE ;}   /* Handle last line without new line */
+<<EOF>>                                 {static int once = 0; return once++ ? YY_NULL : T_NEWLINE;}   /* Handle last line without new line */
 
 
 %%
