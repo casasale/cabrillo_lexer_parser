@@ -235,6 +235,10 @@ int main(int argc, char* argv[]) {
 #if YYDEBUG
 //    yydebug = 1;
 #endif
+    if(argc > 2){
+        fprintf(stderr, "Error: Usage: %s <filename>\n", argv[0]);
+        exit(1);
+    }
 
     if(argc == 2) {
         yyin = fopen(argv[1], "r");
