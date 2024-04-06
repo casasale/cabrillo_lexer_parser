@@ -9,6 +9,16 @@ ____________________________________________________
 Goal:         Provide basic open infrastructure to organize Amateur Radio contests, e.g. for contests organized by the Chile Contest Group
 
 ____________________________________________________
+How to examples:
+
+make ; # Compile it
+
+./cabrillo < logs/WW_DIGI_2023_CA3TSK.cabrillo  ; # Redirect a log file to the executable
+
+./cabrillo < logs/CQ_WPX_SSB_2024_CB3A.cabrillo
+
+____________________________________________________
+
 - Version:      V0.1    20240406
 - Author:       Tihomir Sokcevic
 - Callsign:     CA3TSK
@@ -19,7 +29,7 @@ ____________________________________________________
 
 ____________________________________________________
 Timeline (Versions):
-- 20240406 V0.1 Initial version
+- 20240406 V0.1 Initial version that parses the cabrillo log and prints out the details
 
 ____________________________________________________
 This code was developed based on the details from https://wwrof.org/cabrillo/
