@@ -8,7 +8,7 @@
     License-URL:    https://www.gnu.org/licenses/gpl-3.0.html
     Goal:           Provide basic open infrastructure to organize Amateur Radio contests, e.g.
                     for contests organized by the Chile Contest Group
-	URL:			https://www.chilecontest.com
+    URL:            https://www.chilecontest.com
 */
 
 %option noyywrap
