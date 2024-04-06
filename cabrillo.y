@@ -17,29 +17,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* #include "cabrillo.tab.h" */
+#include "cabrillo.tab.h"
 
 extern int yylex(void*, void*);
-
-extern int yyparse();
 extern FILE* yyin;
-extern char *yytext;
 extern int yylineno;
 
-/* Location type.  */
-#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
-typedef struct YYLTYPE YYLTYPE;
-struct YYLTYPE
-{
-  int first_line;
-  int first_column;
-  int last_line;
-  int last_column;
-};
-# define YYLTYPE_IS_DECLARED 1
-# define YYLTYPE_IS_TRIVIAL 1
-#endif
-
+/*
+extern int yyparse();
+extern char *yytext;
+*/
 
 void yyerror(YYLTYPE * yylloc, const char* s);
 
