@@ -138,11 +138,11 @@ notwhitespace                           [^ \t\f\r\n]+
 eol                                     "\r"?"\n"
 callsign                                [a-zA-Z0-9]+[0-9][a-zA-Z0-9]*[a-zA-Z]
 email                                   [a-zA-Z0-9\.\-\_]+"@"[a-zA-Z0-9\.\-\_]+"."[a-zA-Z0-9\.\-\_]+
-date                                    [0-9][0-9][0-9][0-9]"-"[0-9][0-9]"-"[0-9][0-9]
-maidenhead_grid4                        [a-rA-R][a-rA-R][0-9][0-9]
-maidenhead_grid6                        [a-rA-R][a-rA-R][0-9][0-9][a-xA-X][a-xA-X]
-maidenhead_grid8                        [a-rA-R][a-rA-R][0-9][0-9][a-xA-X][a-xA-X][0-9][0-9]
-time                                    [0-9][0-9][0-9][0-9]
+date                                    [0-9]{4,4}"-"[0-9]{2,2}"-"[0-9]{2,2}
+maidenhead_grid4                        [a-rA-R]{2,2}[0-9]{2,2}
+maidenhead_grid6                        [a-rA-R]{2,2}[0-9]{2,2}[a-xA-X]{2,2}
+maidenhead_grid8                        [a-rA-R]{2,2}[0-9]{2,2}[a-xA-X]{2,2}[0-9]{2,2}
+time                                    [0-9]{4,4}
 word                                    [a-zA-Z0-9\.\-\_]+
 alphanum                                [a-zA-Z0-9]+
 alphanumhyphen                          [a-zA-Z0-9\-]+

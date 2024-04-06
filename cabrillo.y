@@ -256,9 +256,9 @@ int main(int argc, char* argv[]) {
 
 void yyerror(YYLTYPE * yylloc, const char* s) {
     if(yylloc) {
-        fprintf(stderr, "Error: File=%s Line=%02d Column=%02d : %s\n", g_current_filename, yylloc->first_line,  yylloc->first_column, s);
+        fprintf(stderr, "Error: File %s Line %02d Column %02d : %s\n", g_current_filename, yylloc->first_line,  yylloc->first_column, s);
     } else {
-       fprintf(stderr, "Error: File=%s Line=%02d : %s\n", g_current_filename, yylineno, s);
+       fprintf(stderr, "Error: File %s Line %02d : %s\n", g_current_filename, yylineno, s);
     }
 
     yyin_fclose();
