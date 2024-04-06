@@ -19,7 +19,6 @@ make ; # Compile it
 
 ____________________________________________________
 
-- Version:      V0.1    20240406
 - Author:       Tihomir CA3TSK
 - Callsign:     CA3TSK
 - Copyright:    Tihomir CA3TSK 2024
