@@ -13,9 +13,9 @@ How to examples:
 
 make ; # Compile it
 
-./cabrillo < logs/WW_DIGI_2023_CA3TSK.cabrillo  ; # Redirect a log file to the executable
+./cabrillo logs/WW_DIGI_2023_CA3TSK.cabrillo
 
-./cabrillo < logs/CQ_WPX_SSB_2024_CB3A.cabrillo
+./cabrillo logs/CQ_WPX_SSB_2024_CB3A.cabrillo
 
 ____________________________________________________
 
