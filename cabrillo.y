@@ -14,6 +14,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "cabrillo.tab.h"
 
@@ -26,10 +27,13 @@ extern int yyparse();
 extern char *yytext;
 */
 
+char * uppercase(char * s);
 void yyin_fclose();
 void yyerror(YYLTYPE * yylloc, const char* s);
 
 #define STR_FREE(p)    {if(p){free(p); p = NULL;}}
+
+extern int iOPERATORS_STATE;
 
 %}
 
@@ -107,7 +111,7 @@ log_end:    KW_END_OF_LOG T_NEWLINE                                             
 ;
 
 log_header_items:
-            | log_header_items KW_CALLSIGN T_CALLSIGN T_NEWLINE                         {printf("KW_CALLSIGN: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_CALLSIGN T_CALLSIGN T_NEWLINE                         {printf("KW_CALLSIGN: %s\n", uppercase(yylval.str)); STR_FREE(yylval.str);}
             | log_header_items KW_CONTEST contest T_NEWLINE                             {printf("KW_CONTEST: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_CATEGORY_ASSISTED category_assited T_NEWLINE          {printf("KW_CATEGORY_ASSISTED: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_CATEGORY_BAND category_band T_NEWLINE                 {printf("KW_CATEGORY_BAND: %s\n", yylval.str); STR_FREE(yylval.str);}
@@ -123,7 +127,7 @@ log_header_items:
             | log_header_items KW_CLUB sentence T_NEWLINE                               {printf("KW_CLUB: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_CREATED_BY sentence T_NEWLINE                         {printf("KW_CREATED_BY: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_EMAIL T_EMAIL T_NEWLINE                               {printf("KW_EMAIL: %s\n", yylval.str); STR_FREE(yylval.str);}
-            | log_header_items KW_GRID_LOCATOR grid_locator T_NEWLINE                   {printf("KW_GRID_LOCATOR: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_GRID_LOCATOR grid_locator T_NEWLINE                   {printf("KW_GRID_LOCATOR: %s\n", uppercase(yylval.str)); STR_FREE(yylval.str);}
             | log_header_items KW_LOCATION sentence T_NEWLINE                           {printf("KW_LOCATION: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_NAME sentence T_NEWLINE                               {printf("KW_NAME: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_ADDRESS sentence T_NEWLINE                            {printf("KW_ADDRESS: %s\n", yylval.str); STR_FREE(yylval.str);}
@@ -131,7 +135,7 @@ log_header_items:
             | log_header_items KW_ADDRESS_STATE_PROVINCE sentence T_NEWLINE             {printf("KW_ADDRESS_STATE_PROVINCE: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_ADDRESS_POSTALCODE sentence T_NEWLINE                 {printf("KW_ADDRESS_POSTALCODE: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_ADDRESS_COUNTRY sentence T_NEWLINE                    {printf("KW_ADDRESS_COUNTRY: %s\n", yylval.str); STR_FREE(yylval.str);}
-            | log_header_items KW_OPERATORS operators T_NEWLINE                         {printf("KW_OPERATORS: %s\n", yylval.str); STR_FREE(yylval.str);}
+            | log_header_items KW_OPERATORS operators T_NEWLINE                         {printf("KW_OPERATORS: %s\n", uppercase(yylval.str)); iOPERATORS_STATE = 0; STR_FREE(yylval.str);}
             | log_header_items KW_OFFTIME offtime T_NEWLINE                             {printf("KW_OFFTIME: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_SOAPBOX sentence T_NEWLINE                            {printf("KW_SOAPBOX: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_DEBUG sentence T_NEWLINE                              {printf("KW_DEBUG: %s\n", yylval.str); STR_FREE(yylval.str);}
@@ -219,6 +223,20 @@ offtime:
 
 
 %%
+
+char * uppercase(char * s) {
+  if(!s){
+    return s;
+  }
+
+  char * r = s;
+
+  for(;*s; ++s) {
+    *s = toupper((unsigned char) *s);
+   }
+
+  return r;
+}
 
 void yyin_fclose() {
     if(yyin && yyin != stdin) {

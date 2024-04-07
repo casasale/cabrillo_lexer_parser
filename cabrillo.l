@@ -119,6 +119,7 @@ int iOPERATORS = 0;
 int iOFFTIME = 0;
 int iDEBUG = 0;
 int iSTATION_CALLSIGN = 0;
+int iOPERATORS_STATE = 0;
 
 %}
 
@@ -132,6 +133,7 @@ int iSTATION_CALLSIGN = 0;
 
 whitespace                              [ \t\f\r]+
 notwhitespace                           [^ \t\f\r\n]+
+notwhitespacecomma                      [^ \t\f\r\n\,]+
 
 eol                                     "\r"?"\n"
 callsign                                [a-zA-Z0-9]+[0-9][a-zA-Z0-9]*[a-zA-Z]
@@ -211,7 +213,7 @@ num                                     [0-9]+
 "ADDRESS-STATE-PROVINCE:"               {duplicate_check(0, &iADDRESS_STATE_PROVINCE); yylval->str = 0; return KW_ADDRESS_STATE_PROVINCE;}
 "ADDRESS-POSTALCODE:"                   {duplicate_check(0, &iADDRESS_POSTALCODE); yylval->str = 0; return KW_ADDRESS_POSTALCODE;}
 "ADDRESS-COUNTRY:"                      {duplicate_check(0, &iADDRESS_COUNTRY); yylval->str = 0; return KW_ADDRESS_COUNTRY;}
-"OPERATORS:"                            {duplicate_check(0, &iOPERATORS); yylval->str = 0; return KW_OPERATORS;}
+"OPERATORS:"                            {duplicate_check(0, &iOPERATORS); yylval->str = 0; iOPERATORS_STATE = 1; return KW_OPERATORS;}
 "OFFTIME:"                              {duplicate_check(0, &iOFFTIME); yylval->str = 0; return KW_OFFTIME;}
 "SOAPBOX:"                              {yylval->str = 0; return KW_SOAPBOX;}     /* Can be many entries */
 "DEBUG:"                                {duplicate_check(0, &iDEBUG); yylval->str = 0; return KW_DEBUG;}
@@ -235,6 +237,7 @@ num                                     [0-9]+
 "@"{callsign}                           {duplicate_check(0, &iSTATION_CALLSIGN); str_cat(&yylval->str, yytext); return T_STATION_CALLSIGN;}
 "@"{alphanum}"/"{callsign}              {duplicate_check(0, &iSTATION_CALLSIGN); str_cat(&yylval->str, yytext); return T_STATION_CALLSIGN;}
 "@"{callsign}"/"{alphanum}              {duplicate_check(0, &iSTATION_CALLSIGN); str_cat(&yylval->str, yytext); return T_STATION_CALLSIGN;}
+
 
 {num}                                   {str_cat(&yylval->str, yytext); return T_NUMBER;}
 {alphanumhyphen}                        {str_cat(&yylval->str, yytext); return T_CONTEST;}
