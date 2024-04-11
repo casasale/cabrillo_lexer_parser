@@ -34,6 +34,13 @@
 int iSTART_OF_LOG = 0;
 int iEND_OF_LOG = 0;
 
+#define COMMA_TYPE_NO_SPACES            0
+#define COMMA_TYPE_SPACES_BEFORE        1
+#define COMMA_TYPE_SPACES_AFTER         2
+#define COMMA_TYPE_SPACES_BEFORE_AFTER  3
+int iCOMMA_TYPE = COMMA_TYPE_NO_SPACES; /* 0: No spaces around comma; 1: Spaces before comma; 2; Spaces after comma; 3: Spaces before and after comma */
+int iCOMMA_COUNT = 0;
+
 void str_cat(char ** s, char * t) {
     if(!s || !t || !iSTART_OF_LOG){
         return;
@@ -47,7 +54,7 @@ void str_cat(char ** s, char * t) {
 
     char * n = (char *) calloc(strlen(*s) + strlen(t) + 64, sizeof(char));
     strcat(n, *s);
-    strcat(n, " ");
+    strcat(n, iCOMMA_COUNT ? "" : " ");
     strcat(n, t);
     free(*s);
     *s = n;
@@ -132,6 +139,7 @@ int iOPERATORS_STATE = 0;
 /* %option debug */
 
 whitespace                              [ \t\f\r]+
+whitespacecomma                         [ \t\f\r\,]+
 notwhitespace                           [^ \t\f\r\n]+
 notwhitespacecomma                      [^ \t\f\r\n\,]+
 
@@ -242,10 +250,30 @@ num                                     [0-9]+
 {num}                                   {str_cat(&yylval->str, yytext); return T_NUMBER;}
 {alphanumhyphen}                        {str_cat(&yylval->str, yytext); return T_CONTEST;}
 {date}{whitespace}{time}{whitespace}{date}{whitespace}{time}    {str_cat(&yylval->str, yytext); return T_OFFTIME;}
-{notwhitespace}                         {str_cat(&(yylval->str), yytext); return T_WORD;}
+{notwhitespacecomma}                    {str_cat(&(yylval->str), yytext); return T_WORD;}
 
-[ \t\f]+                                {/* Do nothing */}
-.                                       {return *yytext;}
+ /* Previously: Do nothing for [ \t\f]+ */
+{whitespacecomma}+                   {  \
+                                            iCOMMA_COUNT = 0; \
+                                            if(!iOPERATORS_STATE && yytext) { \
+                                                for(char * s = yytext; *s; ++s) { \
+                                                    if(*s == ',') { \
+                                                        ++iCOMMA_COUNT; \
+                                                        if(iCOMMA_COUNT == 1 && s != yytext && *(s -1 ) != ',') { \
+                                                            str_cat(&yylval->str, " "); \
+                                                        } \
+                                                        str_cat(&yylval->str, ","); \
+                                                        if(*(s + 1) && *(s + 1) != ',') { \
+                                                            str_cat(&yylval->str, " "); \
+                                                        } \
+                                                    } \
+                                                } \
+                                            } \
+                                        }
+
+
 <<EOF>>                                 {static int once = 0; return once++ ? YY_NULL : T_NEWLINE;}   /* Handle last line without new line */
+
+    /* //.                                       {return *yytext;} */
 
 %%
