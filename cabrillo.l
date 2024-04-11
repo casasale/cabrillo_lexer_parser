@@ -248,7 +248,7 @@ num                                     [0-9]+
 {notwhitespacecomma}                    {str_cat(&(yylval->str), yytext); return T_WORD;}
 
  /* Previously: Do nothing for [ \t\f]+ */
-{whitespacecomma}+                   {
+{whitespacecomma}+                      {
                                             iCOMMA_COUNT = 0;
                                             if(!iOPERATORS_STATE && yytext) {
                                                 for(char * s = yytext; *s; ++s) {
