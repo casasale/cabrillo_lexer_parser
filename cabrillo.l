@@ -248,23 +248,23 @@ num                                     [0-9]+
 {notwhitespacecomma}                    {str_cat(&(yylval->str), yytext); return T_WORD;}
 
  /* Previously: Do nothing for [ \t\f]+ */
-{whitespacecomma}+                   {  \
-                                            iCOMMA_COUNT = 0; \
-                                            if(!iOPERATORS_STATE && yytext) { \
-                                                for(char * s = yytext; *s; ++s) { \
-                                                    if(*s == ',') { \
-                                                        ++iCOMMA_COUNT; \
-                                                        if(iCOMMA_COUNT == 1 && s != yytext && *(s -1 ) != ',') { \
-                                                            str_cat(&yylval->str, " "); \
-                                                        } \
-                                                        str_cat(&yylval->str, ","); \
-                                                        if(*(s + 1) && *(s + 1) != ',') { \
-                                                            str_cat(&yylval->str, " "); \
-                                                        } \
-                                                    } \
-                                                } \
-                                            } \
-                                            iCOMMA_COUNT = 0; \
+{whitespacecomma}+                   {
+                                            iCOMMA_COUNT = 0;
+                                            if(!iOPERATORS_STATE && yytext) {
+                                                for(char * s = yytext; *s; ++s) {
+                                                    if(*s == ',') {
+                                                        ++iCOMMA_COUNT;
+                                                        if(iCOMMA_COUNT == 1 && s != yytext && *(s -1 ) != ',') {
+                                                            str_cat(&yylval->str, " ");
+                                                        }
+                                                        str_cat(&yylval->str, ",");
+                                                        if(*(s + 1) && *(s + 1) != ',') {
+                                                            str_cat(&yylval->str, " ");
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            iCOMMA_COUNT = 0;
                                         }
 
 
