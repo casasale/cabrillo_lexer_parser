@@ -19,8 +19,8 @@
 #include "cabrillo.tab.h"
 
 extern int yylex(void*, void*);
-extern FILE* yyin;
-extern int yylineno;
+extern FILE* cabin;
+extern int cablineno;
 
 /*
 extern int yyparse();
@@ -28,8 +28,8 @@ extern char *yytext;
 */
 
 char * uppercase(char * s);
-void yyin_fclose();
-void yyerror(YYLTYPE * yylloc, const char* s);
+void cabin_fclose();
+void caberror(YYLTYPE * yylloc, const char* s);
 
 #define STR_FREE(p)    {if(p){free(p); p = NULL;}}
 
@@ -42,6 +42,7 @@ extern int iOPERATORS_STATE;
 %define api.pure full
 %locations
 %define parse.error verbose
+/* %name-prefix cab */
 
 %union{
   char * str;
@@ -107,7 +108,7 @@ log: log_start log_header_items log_qso_items log_end
 log_start:    KW_START_OF_LOG sentence T_NEWLINE                                        {printf("KW_START_OF_LOG: %s\n", yylval.str); STR_FREE(yylval.str);}
 ;
 
-log_end:    KW_END_OF_LOG T_NEWLINE                                                     {printf("KW_END_OF_LOG:\n"); yyin_fclose(); exit(0);}
+log_end:    KW_END_OF_LOG T_NEWLINE                                                     {printf("KW_END_OF_LOG:\n"); cabin_fclose(); exit(0);}
 ;
 
 log_header_items:
@@ -238,17 +239,17 @@ char * uppercase(char * s) {
   return r;
 }
 
-void yyin_fclose() {
-    if(yyin && yyin != stdin) {
-        fclose(yyin);
-        yyin = NULL;
+void cabin_fclose() {
+    if(cabin && cabin != stdin) {
+        fclose(cabin);
+        cabin = NULL;
     }
 }
 
 const char* g_current_filename = "STDIN";
 
 int main(int argc, char* argv[]) {
-    yyin = stdin;
+    cabin = stdin;
 
 #if YYDEBUG
 //    yydebug = 1;
@@ -259,9 +260,9 @@ int main(int argc, char* argv[]) {
     }
 
     if(argc == 2) {
-        yyin = fopen(argv[1], "r");
+        cabin = fopen(argv[1], "r");
         g_current_filename = argv[1];
-        if(!yyin) {
+        if(!cabin) {
             perror(argv[1]);
             return 1;
         }
@@ -269,21 +270,21 @@ int main(int argc, char* argv[]) {
 
     do {
         yyparse();
-    } while(!feof(yyin));
+    } while(!feof(cabin));
 
-    yyin_fclose();
+    cabin_fclose();
 
     return 0;
 }
 
-void yyerror(YYLTYPE * yylloc, const char* s) {
+void caberror(YYLTYPE * yylloc, const char* s) {
     if(yylloc) {
         fprintf(stderr, "Error: File %s Line %02d Column %02d : %s\n", g_current_filename, yylloc->first_line,  yylloc->first_column, s);
     } else {
-       fprintf(stderr, "Error: File %s Line %02d : %s\n", g_current_filename, yylineno, s);
+       fprintf(stderr, "Error: File %s Line %02d : %s\n", g_current_filename, cablineno, s);
     }
 
-    yyin_fclose();
+    cabin_fclose();
 
     exit(1);
 }

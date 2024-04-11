@@ -55,7 +55,7 @@ void str_cat(char ** s, char * t) {
     *s = n;
 }
 
-extern void yyerror(YYLTYPE * yylloc, const char* s);
+extern void caberror(YYLTYPE * yylloc, const char* s);
 
 void duplicate_check(int max_count, int * prev_line) {
     if(iEND_OF_LOG) {
@@ -63,7 +63,7 @@ void duplicate_check(int max_count, int * prev_line) {
     }
 
     if(!prev_line) {
-        yyerror(NULL, "Unexpected internal error condition.");
+        caberror(NULL, "Unexpected internal error condition.");
         return;
     }
 
@@ -90,7 +90,7 @@ void duplicate_check(int max_count, int * prev_line) {
 
     str_cat(&s, buffer);
 
-    yyerror(NULL, s);
+    caberror(NULL, s);
 }
 
 int iCONTEST = 0;
@@ -130,6 +130,8 @@ int iOPERATORS_STATE = 0;
 %option bison-bridge
 %option bison-locations
 %option yylineno
+
+/* %option prefix="cab" */
 
 /* %option debug */
 
@@ -254,19 +256,19 @@ num                                     [0-9]+
                                                 for(char * s = yytext; *s; ++s) {
                                                     if(*s == ',') {
                                                         ++iCOMMA_COUNT;
-                                                        if(iCOMMA_COUNT == 1 && s != yytext && *(s -1 ) != ',') {
+                                                        if(iCOMMA_COUNT == 1 && s != yytext && *(s -1) != ',') {
                                                             str_cat(&yylval->str, " ");
                                                         }
                                                         str_cat(&yylval->str, ",");
                                                         if(*(s + 1) && *(s + 1) != ',') {
                                                             str_cat(&yylval->str, " ");
+                                                            ++s;
                                                         }
                                                     }
                                                 }
                                             }
                                             iCOMMA_COUNT = 0;
                                         }
-
 
 <<EOF>>                                 {static int once = 0; return once++ ? YY_NULL : T_NEWLINE;}   /* Handle last line without new line */
 
