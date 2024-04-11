@@ -34,11 +34,6 @@
 int iSTART_OF_LOG = 0;
 int iEND_OF_LOG = 0;
 
-#define COMMA_TYPE_NO_SPACES            0
-#define COMMA_TYPE_SPACES_BEFORE        1
-#define COMMA_TYPE_SPACES_AFTER         2
-#define COMMA_TYPE_SPACES_BEFORE_AFTER  3
-int iCOMMA_TYPE = COMMA_TYPE_NO_SPACES; /* 0: No spaces around comma; 1: Spaces before comma; 2; Spaces after comma; 3: Spaces before and after comma */
 int iCOMMA_COUNT = 0;
 
 void str_cat(char ** s, char * t) {
@@ -269,6 +264,7 @@ num                                     [0-9]+
                                                     } \
                                                 } \
                                             } \
+                                            iCOMMA_COUNT = 0; \
                                         }
 
 
