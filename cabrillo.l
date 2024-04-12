@@ -247,7 +247,7 @@ num                                     [0-9]+
 {num}                                   {str_cat(&yylval->str, yytext); return T_NUMBER;}
 {alphanumhyphen}                        {str_cat(&yylval->str, yytext); return T_CONTEST;}
 {date}{whitespace}{time}{whitespace}{date}{whitespace}{time}    {str_cat(&yylval->str, yytext); return T_OFFTIME;}
-{notwhitespacecomma}                    {str_cat(&(yylval->str), yytext); return T_WORD;}
+{notwhitespacecomma}+                   {str_cat(&(yylval->str), yytext); return T_WORD;}
 
  /* Previously: Do nothing for [ \t\f]+ */
 {whitespacecomma}+                      {
