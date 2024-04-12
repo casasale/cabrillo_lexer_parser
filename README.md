@@ -29,6 +29,7 @@ ____________________________________________________
 ____________________________________________________
 Timeline (Versions):
 - 20240406 V0.1 Initial version that parses the cabrillo log and prints out the details
+- 20240411 V0.2 Added missing comma support in operators, and prefixes to avoid collisions
 
 ____________________________________________________
 This code was developed based on the details from https://wwrof.org/cabrillo/
