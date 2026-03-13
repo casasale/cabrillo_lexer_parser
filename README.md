@@ -40,4 +40,4 @@ This code was developed based on the details from https://wwrof.org/cabrillo/
 
 ____________________________________________________
 
-# 73 from Chile de Tihomir CA3TSK
+# 73 from Chile de Tihomir CE3TSK
