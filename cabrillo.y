@@ -3,8 +3,8 @@
 /*
     Description:    Lexer and Parser for Cabrillo log format used in Amateur Radio contests
     Author:         Tihomir Sokcevic
-    Callsign:       CA3TSK
-    Copyright:      Tihomir Sokcevic 2024
+    Callsign:       CE3TSK
+    Copyright:      Tihomir Sokcevic 2024-2026
     License:        GNU General Public License v3.0 (GNU GPLv3)
     License-URL:    https://www.gnu.org/licenses/gpl-3.0.html
     Goal:           Provide basic open infrastructure to organize Amateur Radio contests, e.g.
@@ -59,7 +59,7 @@ extern int iOPERATORS_STATE;
 
 %token T_NEWLINE T_END
 
-%token KW_START_OF_LOG KW_END_OF_LOG KW_COMMENT 
+%token KW_START_OF_LOG KW_END_OF_LOG KW_COMMENT KW_HEADER_COMMENT
 %token KW_CALLSIGN KW_CONTEST
 
 %token KW_CATEGORY_ASSISTED
@@ -140,10 +140,11 @@ log_header_items:
             | log_header_items KW_OFFTIME offtime T_NEWLINE                             {printf("KW_OFFTIME: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_SOAPBOX sentence T_NEWLINE                            {printf("KW_SOAPBOX: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_header_items KW_DEBUG sentence T_NEWLINE                              {printf("KW_DEBUG: %s\n", yylval.str); STR_FREE(yylval.str);}
-            | log_header_items KW_COMMENT sentence T_NEWLINE                            {printf("KW_COMMENT:\n"); STR_FREE(yylval.str);}
+            | log_header_items KW_HEADER_COMMENT sentence T_NEWLINE                     {printf("KW_HEADER_COMMENT:\n"); STR_FREE(yylval.str);}
 ;
 
-log_qso_items: 
+log_qso_items:
+            /* Can be zero or more QSO / X-QSO / comment lines */
             | log_qso_items KW_QSO sentence T_NEWLINE                                   {printf("KW_QSO: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_qso_items KW_X_QSO sentence T_NEWLINE                                 {printf("KW_X_QSO: %s\n", yylval.str); STR_FREE(yylval.str);}
             | log_qso_items KW_COMMENT sentence T_NEWLINE                               {printf("KW_COMMENT:\n"); STR_FREE(yylval.str);}

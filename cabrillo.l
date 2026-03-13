@@ -3,13 +3,15 @@
 /*
     Description:    Lexer and Parser for Cabrillo log format used in Amateur Radio contests
     Author:         Tihomir Sokcevic
-    Callsign:       CA3TSK
-    Copyright:      Tihomir Sokcevic 2024
+    Callsign:       CE3TSK
+    Copyright:      Tihomir Sokcevic 2024-2026
     License:        GNU General Public License v3.0 (GNU GPLv3)
     License-URL:    https://www.gnu.org/licenses/gpl-3.0.html
     Goal:           Provide basic open infrastructure to organize Amateur Radio contests, e.g.
                     for contests organized by the Chile Contest Group
     URL:            https://www.chilecontest.com
+    https://www.chilecontest.com/CE-WPX_Contest_Rules_English_V2.pdf
+    https://wwrof.org/cabrillo/
 */
 
 #define YY_USER_INIT    {yylval->str = 0; yylloc->first_line = 1; yylloc->first_column = 1; yylloc->last_line = 1; yylloc->last_column = 1;}
@@ -122,6 +124,7 @@ int iOFFTIME = 0;
 int iDEBUG = 0;
 int iSTATION_CALLSIGN = 0;
 int iOPERATORS_STATE = 0;
+int iQSO_SECTION = 0;
 
 %}
 
@@ -222,9 +225,9 @@ num                                     [0-9]+
 "OFFTIME:"                              {duplicate_check(0, &iOFFTIME); yylval->str = 0; return KW_OFFTIME;}
 "SOAPBOX:"                              {yylval->str = 0; return KW_SOAPBOX;}     /* Can be many entries */
 "DEBUG:"                                {duplicate_check(0, &iDEBUG); yylval->str = 0; return KW_DEBUG;}
-"X-QSO:"                                {yylval->str = 0; return KW_X_QSO;}
-"X-"[^Q][^S][^O].*                      {yylval->str = 0; return KW_COMMENT;}     /* Can be many entries */
-"QSO:"                                  {yylval->str = 0; return KW_QSO;}
+"X-QSO:"                                {iQSO_SECTION = 1; yylval->str = 0; return KW_X_QSO;}
+"X-"[^Q][^S][^O].*                      {yylval->str = 0; return iQSO_SECTION ? KW_COMMENT : KW_HEADER_COMMENT;}     /* Can be many entries */
+"QSO:"                                  {iQSO_SECTION = 1; yylval->str = 0; return KW_QSO;}
 
 "\r\n"                                  {return T_NEWLINE;}
 "\n"                                    {return T_NEWLINE;}

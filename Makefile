@@ -13,5 +13,5 @@ debug: lex.cab.c cabrillo.tab.c cabrillo.tab.h
 	gcc -g -o cabrillo-g cabrillo.tab.c lex.cab.c
 
 clean:
-	rm cabrillo cabrillo-g cabrillo.tab.c lex.cab.c cabrillo.tab.h cabrillo.output
+	rm -f cabrillo cabrillo-g cabrillo.tab.c lex.cab.c cabrillo.tab.h cabrillo.output
 
